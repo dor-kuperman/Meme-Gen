@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meme Generator</title>
+    <link rel="stylesheet" href="css/main.css">
+</head>
+
+<body onload="onInit()">
+    <div class="header-container flex flex-space-between">
+        <div class="logo">
+            <h1>Meme Generator</h1>
+        </div>
+        <ul class="main-nav flex clean-list">
+            <li>
+                <button class="btn-nav">Gallery</button>
+            </li>
+            <li>
+                <button class="btn-nav">Memes</button>
+            </li>
+            <li>
+                <button class="btn-nav">About</button>
+            </li>
+        </ul>
+    </div>
+
+    <div class="search-container">
+        <input type="search" id="search-input" placeholder="Search meme by keyword">
+        <div class="popular-searches">POPULAR SEARCHES GO HERE</div>
+    </div>
+
+    <div class="container">
+        <div class="meme-editor hidden-div flex">
+            <canvas id="my-canvas" style="border: 1px solid black;"></canvas>
+            <input type="text" id="text-on-meme" oninput="changeTextToMeme()" placeholder="Change text on meme">
+            <button class="font-changer" onclick="changeFontSize(this)">Increase font size</button>
+            <button class="font-changer" onclick="changeFontSize(this)">Decrease font size</button>
+            <button class="text-pos-up" onclick="changeTextPos(this)">Take the text up</button>
+            <button class="text-pos-down" onclick="changeTextPos(this)">Take the text down</button>
+            <button class="switch-line" onclick="switchTxtsPos()">Switch line</button>
+        </div>
+
+        <div class="gallery-imgs">
+        </div>
+    </div>
+    <footer>
+        From Wikipedia:
+        An Internet meme, more commonly known simply as a meme (/miːm/ MEEM), is a type of meme that is spread via the
+        Internet, often through social media platforms. Traditionally, a prominent form of such memes consisted of image
+        macros paired with a concept or catchphrase.
+    </footer>
+
+    <script src="js/proj-service.js"></script>
+    <script src="js/storage-utils.js"></script>
+    <script src="js/proj-controller.js"></script>
+</body>
+
+</html>
