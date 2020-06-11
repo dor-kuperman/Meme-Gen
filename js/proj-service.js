@@ -3,30 +3,33 @@
 // var gKeywords = { 'happy': 12, 'funny puk': 1 }
 var gId = 1;
 var gImgs;
-
+var gElCanvas = document.getElementById('my-canvas');
 
 var gMeme = {
     selectedLineIdx: 0,
-    txtOnMeme1: 'Add text!',
-    txtOnMeme2: 'Trolololo!',
 
-    txt1Pos: {
-        x: 80,
-        y: 150
-    },
-
-    txt2Pos: {
-        x: 150,
-        y: 80
-    }
-}
-
-function getTxt1Pos(){
-    return gMeme.txt1Pos
-}
-
-function getTxt2Pos(){
-    return gMeme.txt2Pos
+    lines: [
+        {
+            txt: 'This is the upper line',
+            font: 'impact',
+            size: 30,
+            align: 'center',
+            color: 'white',
+            strokeColor: 'black',
+            y: 50,
+            x: 0
+        },
+        {
+            txt: 'This is the lower line',
+            font: 'impact',
+            size: 30,
+            align: 'center',
+            color: 'white',
+            strokeColor: 'black',
+            y: gElCanvas.height,
+            x: 0
+        }
+    ],
 }
 
 function createImgs() {
@@ -85,6 +88,52 @@ function getMemeImg(memeImgIdx) {
     var img = gImgs.find((memeImg) => {
         return memeImg.id === memeImgIdx;
     })
-
     return img;
+}
+
+function changeFontSize(newSize) {
+    gMeme.lines[gMeme.selectedLineIdx].size += newSize;
+}
+
+function setLineText(lineText) {
+    gMeme.lines[gMeme.selectedLineIdx].txt = lineText;
+}
+
+function switchLine() {
+
+    gMeme.selectedLineIdx++
+    if (gMeme.selectedLineIdx >= gMeme.lines.length) gMeme.selectedLineIdx = 0;
+}
+
+function getCurrLineIdx() {
+    return gMeme.selectedLineIdx;
+}
+
+function changePos(direction) {
+    gMeme.lines[gMeme.selectedLineIdx].y += direction
+}
+
+function changeFont(chosenFont) {
+    gMeme.lines.forEach(function (idx) {
+        idx.font = chosenFont
+    })
+}
+
+function changeColor(selectedColor) {
+    gMeme.lines[gMeme.selectedLineIdx].color = selectedColor
+}
+
+function changeTextAlign(direction) {
+    gMeme.lines.forEach(function (idx) {
+        idx.align = direction
+    })
+}
+
+function calculateHeight(width, height) {
+    return height / width * canvasWidth;
+}
+
+function removeLine() {
+    gMeme.lines.splice(gMeme.selectedLineIdx, 1);
+    gMeme.selectedLineIdx = 0;
 }

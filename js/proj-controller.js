@@ -1,19 +1,20 @@
 'use strict'
-var gElCanvas = document.getElementById('my-canvas');
-var gCtx = gElCanvas.getContext('2d');
-
+var gElCanvas;
+var gCtx;
 var memeData = getMemeInfo();
 var currImageId;
+const canvasWidth = 800;
 var imgs;
+var isEditMode = false;
 
 // STARTING SETTINGS FOR TEXT TO BE CHANGED BY THE USER
-var currFontSize = 40;
 var fontSettings = '';
-var text1Pos = getTxt1Pos();
-var text2Pos = getTxt2Pos();
 
 
 function onInit() {
+
+    gElCanvas = document.getElementById('my-canvas');
+    gCtx = gElCanvas.getContext('2d');
     imgs = createImgs();
     renderImgs(imgs);
 }
@@ -27,77 +28,112 @@ function renderImgs(imgs) {
         .join(' ');
     document.querySelector('.gallery-imgs').innerHTML = strHTMLs;
 }
-function processImgDataToCanvas(imageId) {
-    fontSettings = currFontSize + 'px Impact';
-    currImageId = imageId;
-    var imgObj = getMemeImg(imgs[imageId - 1].id);
-    var image = new Image;
-    image.src = imgObj.url;
 
-    image.onload = function () {
-        gElCanvas.width = image.width;
-        gElCanvas.height = image.height;
-        gCtx.drawImage(image, 0, 0, gElCanvas.width, gElCanvas.height);
-        drawTextOnCanvas(memeData.txtOnMeme1, memeData.txtOnMeme2, fontSettings);
+function drawMeme() {
+    var img = new Image()
+    img.src = `imgs/${currImageId}.jpg`;
+
+    if (!isEditMode) {
+        gElCanvas.height = calculateHeight(img.width, img.height)
+        gElCanvas.width = canvasWidth;
+        isEditMode = true;
+    }
+    img.height = calculateHeight(img.width, img.height)
+    img.width = canvasWidth;
+
+    img.onload = () => {
+        gCtx.drawImage(img, 0, 0, img.width, img.height);
+        drawTextOnCanvas()
     }
 }
 
-function drawTextOnCanvas(txtOnMeme1, txtOnMeme2, fontSettings) {
-    gCtx.font = fontSettings;
-    gCtx.strokeStyle = 'white';
-    gCtx.fillStyle = 'black';
-    // THIS IS THE UPPER LINE WHEN STARTING 
-    gCtx.strokeText(txtOnMeme1, text1Pos.x, text1Pos.y);
-    gCtx.fillText(txtOnMeme1, text1Pos.x, text1Pos.y);
+function drawTextOnCanvas() {
 
-    // THIS IS THE LOWER LINE WHEN STARTING 
-    gCtx.strokeText(txtOnMeme2, text2Pos.x, text2Pos.y);
-    gCtx.fillText(txtOnMeme2, text2Pos.x, text2Pos.y);
+    memeData.lines.forEach(function (line, idx) {
+
+        if (idx === memeData.selectedLineIdx) gCtx.strokeStyle = 'blue';
+        else gCtx.strokeStyle = line.strokeColor;
+        gCtx.fillStyle = line.color;
+        gCtx.font = line.size + 'px ' + line.font;
+        gCtx.textAlign = line.align;
+        const x = gElCanvas.width / 2;
+        gCtx.fillText(line.txt.toUpperCase(), x, getMemeInfo().lines[idx].y);
+        gCtx.strokeText(line.txt.toUpperCase(), x, getMemeInfo().lines[idx].y);
+    })
 }
 
-function changeTextToMeme() {
-    memeData.txtOnMeme1 = document.getElementById('text-on-meme').value;
-    processImgDataToCanvas(currImageId);
+function changeTextToMeme(inputFromUser) {
+
+    setLineText(inputFromUser)
+    drawMeme(currImageId)
 }
 
-function enterEditMode(imageId) {
+function enterEditMode(selectedImgId) {
+    currImageId = selectedImgId;
     document.querySelector('.gallery-imgs').classList.toggle('hidden-div');
-    document.querySelector('.meme-editor').classList.toggle('hidden-div');
-    processImgDataToCanvas(imageId);
+    document.querySelector('.container').classList.toggle('hidden-div');
+    drawMeme();
 }
 
-function changeFontSize(buttonChosen) {
-    if (buttonChosen.innerHTML === 'Increase font size') {
-        currFontSize += 2;
-        processImgDataToCanvas(currImageId)
-    }
-    if (buttonChosen.innerHTML === 'Decrease font size') {
-        currFontSize -= 2;
-        processImgDataToCanvas(currImageId)
-    }
+
+
+function onChangeFontSize(value) {
+    var newSize = parseInt(value)
+    changeFontSize(newSize)
+    drawMeme();
 }
 
-function changeTextPos(buttonChosen) {
-    if (buttonChosen.innerHTML === 'Take the text up') {
-        text1Pos.y -= 10;
-        processImgDataToCanvas(currImageId)
-    }
-    if (buttonChosen.innerHTML === 'Take the text down') {
-        text1Pos.y += 10;
-        processImgDataToCanvas(currImageId)
-    }
+function onChangePos(value) {
+    var direction = parseInt(value)
+    changePos(direction)
+    drawMeme();
 }
 
-function switchTxtsPos() {
-    // HANLING X VALUES
+function setFocusToOtherLine() {
+    var elInputFromUser = document.getElementById('text-on-meme');
+    elInputFromUser.value = getMemeInfo().lines[getMemeInfo().selectedLineIdx].txt;
+    elInputFromUser.focus()
+}
 
-    var tempValue = text1Pos.x;
-    text1Pos.x = text2Pos.x;
-    text2Pos.x = tempValue;
+function onSwitchLine() {
+    switchLine();
+    setFocusToOtherLine();
+    drawTextOnCanvas();
+}
 
-    // HANLING Y VALUES
-    tempValue = text1Pos.y;
-    text1Pos.y = text2Pos.y;
-    text2Pos.y = tempValue;
-    processImgDataToCanvas(currImageId);
+function onFontChange(chosenFont) {
+    if (chosenFont === 'you-have-no-value') return;
+
+    if (chosenFont === '1') {
+        chosenFont = 'Impact'
+        changeFont(chosenFont);
+
+    } else if (chosenFont === '2') {
+        chosenFont = 'Comic Sans MS'
+        changeFont(chosenFont);
+
+    } else if (chosenFont === '3') {
+        chosenFont = 'Times New Roman'
+        changeFont(chosenFont);
+    }
+    drawMeme();
+    drawTextOnCanvas();
+}
+
+function onChangeColor(selectedColor) {
+    changeColor(selectedColor)
+    drawMeme();
+    drawTextOnCanvas();
+}
+
+function onChangeAlign(direction) {
+    changeTextAlign(direction)
+    drawMeme();
+    drawTextOnCanvas();
+}
+
+function onRemoveText() {
+    removeLine();
+    drawMeme();
+    drawTextOnCanvas();
 }
