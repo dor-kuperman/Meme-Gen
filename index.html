@@ -31,9 +31,9 @@
     </div> -->
     <main>
         <div class="container hidden-div flex justify-content">
-            <!-- <div class="control-btn">
-                <button><img src="imgs/backspace-arrow.png"></button>
-            </div> -->
+            <div class="control-btn">
+                <button onclick="goBackToGallery()"><img src="imgs/backspace-arrow (1).png"></button>
+            </div>
             <canvas id="my-canvas" onmousedown="onSwitchLine(event)" onmousemove="onMovingMouse(event)"
                 onmouseup="finishPosition()"></canvas>
             <div class="meme-editor">
@@ -69,7 +69,7 @@
                         <img src="imgs/paint-board-and-brush.png">
                     </button>
                     <button class="control-btn color-input">
-                        <input type="color" class="color-input-btn control-btn" oninput="onChangeColor(this.value)">
+                        <input type="color" class="color-input-btn control-btn" oninput="onChangeStroke(this.value)">
                         <img src="imgs/text stroke.png">
                     </button>
                 </div>

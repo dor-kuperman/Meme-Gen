@@ -146,6 +146,18 @@ function onChangeColor(selectedColor) {
 
 }
 
+function onChangeStroke(selectedColor) {
+    changeStroke(selectedColor)
+    drawMemeOnCanvas();
+
+}
+function onChangeColor(selectedColor) {
+    changeColor(selectedColor)
+    drawMemeOnCanvas();
+    console.log('hi');
+
+}
+
 function onChangeAlign(direction) {
     changeTextAlign(direction)
     drawMemeOnCanvas();
@@ -244,4 +256,10 @@ function onStickerClick(ev) {
             return;
         }
     })
+}
+
+function goBackToGallery(){
+    resetGMeme();
+    document.querySelector('.gallery-imgs').classList.toggle('hidden-div');
+    document.querySelector('.container').classList.toggle('hidden-div');
 }

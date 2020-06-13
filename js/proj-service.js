@@ -173,6 +173,10 @@ function changeColor(selectedColor) {
     gMeme.lines[gMeme.currMarkedText].color = selectedColor
 }
 
+function changeStroke(selectedColor) {
+    gMeme.lines[gMeme.currMarkedText].strokeColor = selectedColor
+}
+
 function changeTextAlign(direction) {
     gMeme.lines.forEach(function (idx) {
         idx.align = direction
