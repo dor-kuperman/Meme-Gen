@@ -3,33 +3,39 @@
 // var gKeywords = { 'happy': 12, 'funny puk': 1 }
 var gId = 1;
 var gImgs;
-var gElCanvas = document.getElementById('my-canvas');
+var firstEdit = 0;
+var gMeme;
+var canvasWidth = 600;
+var currImagesNum = 21;
+var gStickers;
 
-var gMeme = {
-    selectedLineIdx: 0,
+function resetGMeme() {
+    gMeme = {
+        currMarkedText: 0,
 
-    lines: [
-        {
-            txt: 'This is the upper line',
-            font: 'impact',
-            size: 30,
-            align: 'center',
-            color: 'white',
-            strokeColor: 'black',
-            y: 50,
-            x: 0
-        },
-        {
-            txt: 'This is the lower line',
-            font: 'impact',
-            size: 30,
-            align: 'center',
-            color: 'white',
-            strokeColor: 'black',
-            y: gElCanvas.height,
-            x: 0
-        }
-    ],
+        lines: [
+            {
+                txt: 'This is the upper line',
+                font: 'impact',
+                size: 30,
+                align: 'center',
+                color: 'white',
+                strokeColor: 'black',
+                y: 50,
+                x: 275.5
+            },
+            {
+                txt: 'This is the lower line',
+                font: 'impact',
+                size: 30,
+                align: 'center',
+                color: 'white',
+                strokeColor: 'black',
+                y: 0,
+                x: 275.5
+            }
+        ],
+    }
 }
 
 function createImgs() {
@@ -55,13 +61,23 @@ function createImgs() {
         createImage('imgs/19.jpg'),
         createImage('imgs/20.jpg'),
         createImage('imgs/21.jpg'),
-        createImage('imgs/22.jpg'),
-        createImage('imgs/23.jpg'),
-        createImage('imgs/24.jpg'),
-        createImage('imgs/25.jpg'),
     );
+    gId = 1;
     gImgs = imgs;
     return imgs;
+}
+
+function createStickers() {
+    var stickers = [];
+    stickers.push(createSticker('imgs/stickers/1.png'),
+        createSticker('imgs/stickers/2.png'),
+        createSticker('imgs/stickers/3.png'),
+        createSticker('imgs/stickers/4.png'),
+        createSticker('imgs/stickers/5.png'),
+        createSticker('imgs/stickers/6.png'),
+    );
+    gStickers = stickers;
+    return stickers;
 }
 
 function createImage(url) {
@@ -72,8 +88,37 @@ function createImage(url) {
     };
 }
 
-function getImages() {
-    return gImgs;
+function createSticker(url) {
+    return {
+        id: gId++,
+        url: url,
+        x: 0,
+        y: 0
+        // keywords: keywords
+    };
+}
+
+function getSticker(id){
+    return gStickers[id - 1];
+}
+
+function addLine() {
+
+    var gElCanvas = document.getElementById('my-canvas');
+    for (var i = 0; i < 1; i++) {
+        gMeme.lines.push(
+            {
+                txt: 'Enter text here',
+                font: 'impact',
+                size: 30,
+                align: 'center',
+                color: 'white',
+                strokeColor: 'black',
+                y: gElCanvas.height / 2,
+                x: 275.5
+            }
+        )
+    }
 }
 
 function getMemeInfo() {
@@ -92,25 +137,30 @@ function getMemeImg(memeImgIdx) {
 }
 
 function changeFontSize(newSize) {
-    gMeme.lines[gMeme.selectedLineIdx].size += newSize;
+    gMeme.lines[gMeme.currMarkedText].size += newSize;
+}
+
+function setLowerLineHeight(canvasHeight) {
+    if (firstEdit > 0) return
+    getMemeInfo().lines[1].y = canvasHeight - 50;
+    firstEdit++;
 }
 
 function setLineText(lineText) {
-    gMeme.lines[gMeme.selectedLineIdx].txt = lineText;
+    gMeme.lines[gMeme.currMarkedText].txt = lineText;
 }
 
 function switchLine() {
-
-    gMeme.selectedLineIdx++
-    if (gMeme.selectedLineIdx >= gMeme.lines.length) gMeme.selectedLineIdx = 0;
+    gMeme.currMarkedText++
+    if (gMeme.currMarkedText >= gMeme.lines.length) gMeme.currMarkedText = 0;
 }
 
 function getCurrLineIdx() {
-    return gMeme.selectedLineIdx;
+    return gMeme.currMarkedText;
 }
 
 function changePos(direction) {
-    gMeme.lines[gMeme.selectedLineIdx].y += direction
+    gMeme.lines[gMeme.currMarkedText].y += direction
 }
 
 function changeFont(chosenFont) {
@@ -120,7 +170,7 @@ function changeFont(chosenFont) {
 }
 
 function changeColor(selectedColor) {
-    gMeme.lines[gMeme.selectedLineIdx].color = selectedColor
+    gMeme.lines[gMeme.currMarkedText].color = selectedColor
 }
 
 function changeTextAlign(direction) {
@@ -134,6 +184,10 @@ function calculateHeight(width, height) {
 }
 
 function removeLine() {
-    gMeme.lines.splice(gMeme.selectedLineIdx, 1);
-    gMeme.selectedLineIdx = 0;
+    gMeme.lines.splice(gMeme.currMarkedText, 1);
+    gMeme.currMarkedText = 0;
+}
+
+function getTextWidth() {
+    return gCtx.measureText(getMemeInfo().lines[currLine].txt.toUpperCase()).width
 }
